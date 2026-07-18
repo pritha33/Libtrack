@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard - LibTrack</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/common.css">
+<style>
+/* Keep only custom dashboard styles, inherit fonts from common.css */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f0f2f5;
+    overflow-x: hidden;
+    font-size: 0.875rem;
+}
+
+/* ===== TOP NAVBAR ===== */
+.top-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: linear-gradient(135deg, #2C3E50, #1ABC9C);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    z-index: 1100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.brand {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-decoration: none;
+    font-family: 'Playfair Display', serif;
+}
+
+.brand i {
+    margin-right: 10px;
+    color: #1ABC9C;
+}
+
+.logout-btn {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 8px 18px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.1);
+    transition: all 0.3s;
+    font-size: 0.875rem;
+}
+
+.logout-btn:hover {
+    background: rgba(255,255,255,0.2);
+    color: white;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    width: 260px;
+    height: calc(100% - 70px);
+    background: linear-gradient(180deg, #2C3E50, #1a252f);
+    padding: 20px 0;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.sidebar .nav-item {
+    margin: 5px 15px;
+}
+
+.sidebar .nav-link {
+    color: rgba(255,255,255,0.8);
+    padding: 12px 18px;
+    border-radius: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.3s;
+    font-size: 0.875rem;
+}
+
+.sidebar .nav-link i {
+    font-size: 1.2rem;
+    width: 24px;
+}
+
+.sidebar .nav-link:hover {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    transform: translateX(5px);
+}
+
+.sidebar .nav-link.active {
+    background: linear-gradient(135deg, #1ABC9C, #16A085);
+    color: white;
+    box-shadow: 0 4px 15px rgba(26,188,156,0.3);
+}
+
+/* Section Title in Sidebar */
+.sidebar-section {
+    color: rgba(255,255,255,0.4);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 15px 20px 5px;
+    font-weight: 600;
+}
+
+/* ===== MAIN CONTENT ===== */
+.main-content {
+    margin-left: 260px;
+    margin-top: 70px;
+    padding: 25px 30px;
+}
+
+/* Page Header */
+.page-header {
+    margin-bottom: 30px;
+}
+
+.page-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #2C3E50;
+    margin: 0;
+}
+
+.page-header h2 i {
+    color: #1ABC9C;
+    margin-right: 10px;
+}
+
+.page-header p {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-top: 8px;
+}
+
+/* Dashboard Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+    margin-bottom: 40px;
+}
+
+/* Stat Cards */
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+}
+
+.stat-card.blue::before { background: linear-gradient(90deg, #3498DB, #2980B9); }
+.stat-card.green::before { background: linear-gradient(90deg, #27AE60, #1E8449); }
+.stat-card.orange::before { background: linear-gradient(90deg, #E67E22, #D35400); }
+.stat-card.red::before { background: linear-gradient(90deg, #E74C3C, #C0392B); }
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.stat-icon i {
+    font-size: 24px;
+}
+
+.stat-card.blue .stat-icon { background: rgba(52,152,219,0.1); color: #3498DB; }
+.stat-card.green .stat-icon { background: rgba(39,174,96,0.1); color: #27AE60; }
+.stat-card.orange .stat-icon { background: rgba(230,126,34,0.1); color: #E67E22; }
+.stat-card.red .stat-icon { background: rgba(231,76,60,0.1); color: #E74C3C; }
+
+.stat-info h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 5px 0;
+}
+
+.stat-card.blue .stat-info h3 { color: #3498DB; }
+.stat-card.green .stat-info h3 { color: #27AE60; }
+.stat-card.orange .stat-info h3 { color: #E67E22; }
+.stat-card.red .stat-info h3 { color: #E74C3C; }
+
+.stat-info p {
+    color: #7f8c8d;
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Recent Activity Section */
+.recent-section {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2C3E50;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.section-title i {
+    color: #1ABC9C;
+    margin-right: 8px;
+}
+
+.activity-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.activity-list li {
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.activity-list li:last-child {
+    border-bottom: none;
+}
+
+.activity-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+}
+
+.activity-icon i {
+    font-size: 16px;
+    color: #1ABC9C;
+}
+
+.activity-text {
+    flex: 1;
+}
+
+.activity-text .title {
+    font-weight: 500;
+    color: #2C3E50;
+    margin-bottom: 3px;
+    font-size: 0.875rem;
+}
+
+.activity-text .time {
+    font-size: 0.75rem;
+    color: #95a5a6;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        top: 70px;
+    }
+    
+    .main-content {
+        margin-left: 0;
+        margin-top: 0;
+        padding: 20px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+<body>
+
+<!-- Top Navbar -->
+<div class="top-navbar">
+    <a href="#" class="brand">
+        <i class="bi bi-book-half"></i> LibTrack
+    </a>
+    <a href="logout.php" class="logout-btn">
+        <i class="bi bi-box-arrow-right"></i> Logout
+    </a>
+</div>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+    <div class="sidebar-section">MAIN</div>
+    <div class="nav-item">
+        <a class="nav-link active" href="dashboard.html">
+            <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+    </div>
+    
+    <div class="sidebar-section">MANAGEMENT</div>
+    <div class="nav-item">
+        <a class="nav-link" href="manage_books.html">
+            <i class="bi bi-book"></i> Manage Books
+        </a>
+    </div>
+    <div class="nav-item">
+        <a class="nav-link" href="manage_users.html">
+            <i class="bi bi-people"></i> Manage Users
+        </a>
+    </div>
+    
+    <div class="sidebar-section">OPERATIONS</div>
+    <div class="nav-item">
+        <a class="nav-link" href="manage_requests.html">
+            <i class="bi bi-check2-square"></i> Requests
+        </a>
+    </div>
+    <div class="nav-item">
+        <a class="nav-link" href="issued_books.html">
+            <i class="bi bi-journal-check"></i> Issued Books
+        </a>
+    </div>
+    <div class="nav-item">
+        <a class="nav-link" href="manage_fines.html">
+            <i class="bi bi-cash-stack"></i> Fines
+        </a>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main-content">
+    <div class="page-header">
+        <h2>
+            <i class="bi bi-speedometer2"></i> Admin Dashboard
+        </h2>
+        <p class="text-muted">Welcome back! Here's what's happening with your library today.</p>
+    </div>
+
+    <!-- Stats Cards - Real data from database -->
+    <div class="stats-grid">
+        <div class="stat-card blue">
+            <div class="stat-icon">
+                <i class="bi bi-journal-bookmark-fill"></i>
+            </div>
+            <div class="stat-info">
+                <h3 id="booksCount">0</h3>
+                <p>Total Books</p>
+            </div>
+        </div>
+
+        <div class="stat-card green">
+            <div class="stat-icon">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <div class="stat-info">
+                <h3 id="usersCount">0</h3>
+                <p>Total Users</p>
+            </div>
+        </div>
+
+        <div class="stat-card orange">
+            <div class="stat-icon">
+                <i class="bi bi-journal-check"></i>
+            </div>
+            <div class="stat-info">
+                <h3 id="issuedCount">0</h3>
+                <p>Issued Books</p>
+            </div>
+        </div>
+
+        <div class="stat-card red">
+            <div class="stat-icon">
+                <i class="bi bi-cash-stack"></i>
+            </div>
+            <div class="stat-info">
+                <h3 id="finesCount">0</h3>
+                <p>Due Fines (TK)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity Section - Real data -->
+    <div class="recent-section">
+        <div class="section-title">
+            <i class="bi bi-clock-history"></i> Recent Activity
+        </div>
+        <ul class="activity-list" id="recentActivity">
+            <li>
+                <div class="activity-icon"><i class="bi bi-arrow-repeat"></i></div>
+                <div class="activity-text">
+                    <div class="title">Loading activities...</div>
+                    <div class="time">Just now</div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- Update the script section in your dashboard.html -->
+<script>
+// Load dashboard stats
+function loadStats() {
+    fetch("admin_stats.php?" + new Date().getTime())
+        .then(res => {
+            if (!res.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return res.json();
+        })
+        .then(data => {
+            if (data.error) {
+                console.error("Error:", data.error);
+                showError();
+                return;
+            }
+            
+            document.getElementById("booksCount").innerText = data.books || 0;
+            document.getElementById("usersCount").innerText = data.users || 0;
+            document.getElementById("issuedCount").innerText = data.issued || 0;
+            document.getElementById("finesCount").innerText = data.fines || 0;
+        })
+        .catch(error => {
+            console.error("Error loading stats:", error);
+            showError();
+        });
+}
+
+function showError() {
+    document.getElementById("booksCount").innerHTML = '<span style="color: #e74c3c;">Error</span>';
+    document.getElementById("usersCount").innerHTML = '<span style="color: #e74c3c;">Error</span>';
+    document.getElementById("issuedCount").innerHTML = '<span style="color: #e74c3c;">Error</span>';
+    document.getElementById("finesCount").innerHTML = '<span style="color: #e74c3c;">Error</span>';
+}
+
+// Load recent activity
+function loadRecentActivity() {
+    fetch("get_recent_activity.php?" + new Date().getTime())
+        .then(res => res.json())
+        .then(activities => {
+            const container = document.getElementById("recentActivity");
+            container.innerHTML = "";
+            
+            if (!activities || activities.length === 0) {
+                container.innerHTML = '<li><div class="activity-text"><div class="title">No recent activity</div></div></li>';
+                return;
+            }
+            
+            activities.forEach(activity => {
+                container.innerHTML += `
+                    <li>
+                        <div class="activity-icon"><i class="bi ${activity.icon || 'bi-info-circle'}"></i></div>
+                        <div class="activity-text">
+                            <div class="title">${activity.message}</div>
+                            <div class="time">${activity.time}</div>
+                        </div>
+                    </li>
+                `;
+            });
+        })
+        .catch(error => {
+            console.error("Error loading activities:", error);
+            const container = document.getElementById("recentActivity");
+            container.innerHTML = '<li><div class="activity-text"><div class="title">Unable to load activities</div></div></li>';
+        });
+}
+
+// Check authentication
+fetch("check_auth.php?" + new Date().getTime())
+    .then(res => res.json())
+    .then(user => {
+        if (user.role !== "admin") {
+            window.location.href = "login.html";
+        }
+    });
+
+// Load everything
+loadStats();
+loadRecentActivity();
+
+// Auto-refresh every 30 seconds
+setInterval(loadStats, 30000);
+</script>
+</body>
+</html>
